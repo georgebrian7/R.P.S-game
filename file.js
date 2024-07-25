@@ -1,33 +1,29 @@
 // Variable to store computer choices
 let computerChoices = ["rock", "paper", "scissors"];
 
+// Variables to store scores
+let scores = {
+    human: 0,
+    computer: 0
+};
+
 // Function to get a random value from an array
 function getRandomValueFromArray(array) {
     const randomIndex = Math.floor(Math.random() * array.length);
     return array[randomIndex];
 }
 
-let result = getRandomValueFromArray(computerChoices);
-console.log("comp plays " + result);
-
 // Function to get human choice
 function getHumanChoice() {
-    let validChoices = ["rock", "paper", "scissors"];
-    let userInput = prompt("Enter your choice: rock, paper, or scissors:");
-    while (!validChoices.includes(userInput)) {
-        userInput = prompt("Invalid choice. Please enter rock, paper, or scissors:");
-    }
-    return userInput;
+    return new Promise((resolve) => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                resolve(button.id);
+            });
+        });
+    });
 }
-
-let resultTwo = getHumanChoice(); // No argument needed
-console.log(resultTwo);
-
-// Variables to store scores
-let scores = {
-    human: 0,
-    computer: 0
-};
 
 // Function to play a single round
 function playRound(humanChoice, computerChoice) {
@@ -38,25 +34,24 @@ function playRound(humanChoice, computerChoice) {
         (humanChoice === "paper" && computerChoice === "rock") ||
         (humanChoice === "scissors" && computerChoice === "paper")
     ) {
-        scores.human++; 
+        scores.human++;
         return "Player wins!";
     } else {
-        scores.computer++; 
+        scores.computer++;
         return "Computer wins!";
     }
 }
 
-// Logic to play the entire game
-function playGame() {
-    for (let i = 0; i < 5; i++) {
-        const humanSelection = getHumanChoice();
-        const computerSelection = getRandomValueFromArray(computerChoices);
-        
-        const result = playRound(humanSelection, computerSelection);
-        console.log(`Round ${i + 1}: ${result} (Human chose ${humanSelection}, Computer chose ${computerSelection})`);
-    }
-    console.log(`Final Score - Human: ${scores.human}, Computer: ${scores.computer}`);
+async function playGame() {
+    const userChoice = await getHumanChoice();
+    console.log(`You chose: ${userChoice}`);
+    
+    let computerChoice = getRandomValueFromArray(computerChoices);
+    console.log(`Computer chose: ${computerChoice}`);
+    
+    let result = playRound(userChoice, computerChoice);
+    alert(result);
+    alert(`Scores: Player - ${scores.human}, Computer - ${scores.computer}`);
 }
 
-// Start the game
 playGame();
